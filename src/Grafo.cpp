@@ -22,8 +22,10 @@ void Grafo::encontraComponente(int verticeAtual, int temposDescoberta[],
                                int tempoAncestralProximo[],
                                stack<int>* acentraisConectados,
                                bool estaNaPilha[], int* tempo) {
-  temposDescoberta[verticeAtual] = tempoAncestralProximo[verticeAtual] =
-      ++*tempo;
+  ++*tempo;
+  temposDescoberta[verticeAtual] = *tempo;
+  tempoAncestralProximo[verticeAtual] = *tempo;
+
   acentraisConectados->push(verticeAtual);
   estaNaPilha[verticeAtual] = true;
 
@@ -104,22 +106,21 @@ bool Grafo::temArestaDeSaida(vector<int> componente) {
 }
 
 int Grafo::getArestasMinimas() {
-  int verticesSemEntrada = 0;
-  int verticesSemSaida = 0;
+  int componentesSemEntrada = 0;
+  int componentesSemSaida = 0;
 
-  for (int i = 0; i < componentesFc.size(); i++) {
+  for (unsigned int i = 0; i < componentesFc.size(); i++) {
     vector<int> componente = componentesFc.at(i);
-    bool componentHasInbound = temArestaDeEntrada(componente);
-    bool componentHasOutbound = temArestaDeSaida(componente);
+    bool componenteTemEntrada = temArestaDeEntrada(componente);
+    bool componenteTemSaida = temArestaDeSaida(componente);
 
-    if (!componentHasInbound) {
-      verticesSemEntrada++;
+    if (!componenteTemEntrada) {
+      componentesSemEntrada++;
     }
-    if (!componentHasOutbound) {
-      verticesSemSaida++;
+    if (!componenteTemSaida) {
+      componentesSemSaida++;
     }
   }
 
-  return verticesSemEntrada > verticesSemSaida ? verticesSemEntrada
-                                               : verticesSemSaida;
+  return max(componentesSemEntrada, componentesSemSaida);
 }
